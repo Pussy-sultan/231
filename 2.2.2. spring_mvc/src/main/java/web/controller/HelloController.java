@@ -6,7 +6,6 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import web.dao.DAO;
-import web.dao.HibernateDAO;
 import web.model.User;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @Controller
 public class HelloController {
-    private DAO dao = new HibernateDAO();
+    private DAO dao;
 
     @Autowired
     public HelloController(DAO dao) {
@@ -28,30 +27,39 @@ public class HelloController {
         messages.add("I'm Spring MVC application");
         messages.add("5.2.0 version by sep'19 ");
         model.addAttribute("messages", messages);
-        return "index";
+        return "hello";
     }
     @GetMapping("/people")
 	public String index(Model model){
     	model.addAttribute("people",dao.getAllUsers());
     	return "view/index";
 	}
-    @GetMapping("/people/new")
-    private String newPerson (Model model){
-    	model.addAttribute("newPerson",new User());
-    	return "views/people/new";
-	}
-    @ModelAttribute("newUser") //на проверки
+
+    @ModelAttribute("newUser")
     public User getPerson(){
         return new User();
     }
+
     @PostMapping("/people")
     public String creat(@ModelAttribute("user") User user, Model model) {
     	dao.saveUser(user);
     	return "redirect:/people";
     }
+
     @DeleteMapping("/people/{id}")
     public String deletePerson(@PathVariable("id") int id){
         dao.removeUserById(id);
+        return "redirect:/people";
+    }
+    @GetMapping("/people/{id}/edit")
+    public String edit (@ModelAttribute("id") int id,Model model){
+        model.addAttribute("user",dao.getUserById(id));
+        return "view/edit";
+    }
+
+    @PatchMapping("/people/{id}")
+    public String updatePerson(@ModelAttribute("user") User updateuser){
+        dao.updateUser(updateuser);
         return "redirect:/people";
     }
 }

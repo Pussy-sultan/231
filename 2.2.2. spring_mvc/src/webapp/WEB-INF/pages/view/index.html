@@ -23,6 +23,9 @@
                 <input type="submit" value="Delete">
             </form>
         </td>
+    <td>
+        <a th:href="@{/people/{id}/edit(id=${user.getId()})}">Edit</a>
+    </td>
     </tr>
 </table>
 <br/>
