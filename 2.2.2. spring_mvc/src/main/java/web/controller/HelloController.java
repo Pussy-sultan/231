@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import web.dao.DAO;
 import web.model.User;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,19 +31,23 @@ public class HelloController {
         model.addAttribute("messages", messages);
         return "hello";
     }
+    @ModelAttribute("newUser")
+    public User getPerson(){
+        return new User();
+    }
     @GetMapping("/people")
 	public String index(Model model){
     	model.addAttribute("people",dao.getAllUsers());
     	return "view/index";
 	}
 
-    @ModelAttribute("newUser")
-    public User getPerson(){
-        return new User();
-    }
-
     @PostMapping("/people")
-    public String creat(@ModelAttribute("user") User user, Model model) {
+    public String creat(@ModelAttribute("newUser")@Valid User user,
+                        BindingResult bindingResult,Model model) {
+        if (bindingResult.hasErrors()){
+            model.addAttribute("people",dao.getAllUsers());
+            return "view/index";
+        }
     	dao.saveUser(user);
     	return "redirect:/people";
     }
@@ -58,7 +64,10 @@ public class HelloController {
     }
 
     @PatchMapping("/people/{id}")
-    public String updatePerson(@ModelAttribute("user") User updateuser){
+    public String updatePerson(@ModelAttribute("user")@Valid User updateuser, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return "view/edit";
+        }
         dao.updateUser(updateuser);
         return "redirect:/people";
     }
