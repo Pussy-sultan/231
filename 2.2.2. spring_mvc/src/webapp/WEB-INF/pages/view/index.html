@@ -6,8 +6,8 @@
 </head>
 <body>
 <h1> Users</h1>
-<table border="1">
-    <tr style="color: indianred">
+<table border="3">
+    <tr style="color: darkred">
         <th>Id</th>
         <th>Name</th>
         <th>Age</th>
@@ -38,7 +38,7 @@
     <input type="text" th:field="*{name}" id="name"/>
     <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
     <br/>
-    <label for="age">Age </label>
+    <label for="age">Age&nbsp;&nbsp;&nbsp;</label>
     <input type="text" th:field="*{age}" id="age"/>
     <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</div>
     <br/>
