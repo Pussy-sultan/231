@@ -1,10 +1,11 @@
-package web.dao;
+package web.service;
 
 import web.model.User;
 
 import java.util.List;
 
-public interface DAO {
+public interface UserService {
+
     void saveUser(User user);
 
     void updateUser(User updateUser);
@@ -14,5 +15,4 @@ public interface DAO {
     List<User> getAllUsers();
 
     User getUserById(int id);
-
 }

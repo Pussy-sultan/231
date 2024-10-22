@@ -6,20 +6,23 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import web.dao.DAO;
+import web.dao.UserDAO;
 import web.model.User;
+import web.service.UserService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class HelloController {
-    private DAO dao;
+public class UserController {
 
     @Autowired
-    public HelloController(DAO dao) {
-        this.dao = dao;
+    private UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping(value = "/")
@@ -36,7 +39,7 @@ public class HelloController {
     }
     @GetMapping("/people")
 	public String index(Model model){
-    	model.addAttribute("people",dao.getAllUsers());
+    	model.addAttribute("people", userService.getAllUsers());
     	return "view/index";
 	}
 
@@ -44,21 +47,21 @@ public class HelloController {
     public String creat(@ModelAttribute("newUser")@Valid User user,
                         BindingResult bindingResult,Model model) {
         if (bindingResult.hasErrors()){
-            model.addAttribute("people",dao.getAllUsers());
+            model.addAttribute("people", userService.getAllUsers());
             return "view/index";
         }
-    	dao.saveUser(user);
+    	userService.saveUser(user);
     	return "redirect:/people";
     }
 
     @DeleteMapping("/people/{id}")
     public String deletePerson(@PathVariable("id") int id){
-        dao.removeUserById(id);
+        userService.removeUserById(id);
         return "redirect:/people";
     }
     @GetMapping("/people/{id}/edit")
     public String edit (@ModelAttribute("id") int id,Model model){
-        model.addAttribute("user",dao.getUserById(id));
+        model.addAttribute("user", userService.getUserById(id));
         return "view/edit";
     }
 
@@ -67,7 +70,7 @@ public class HelloController {
         if (bindingResult.hasErrors()){
             return "view/edit";
         }
-        dao.updateUser(updateuser);
+        userService.updateUser(updateuser);
         return "redirect:/people";
     }
 }
